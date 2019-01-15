@@ -6,19 +6,25 @@
 /*----------------------------------------------------------------------------*/
 
 #include "Robot.h"
-
+#include <WPILib.h>
 #include <Commands/Scheduler.h>
 #include <SmartDashboard/SmartDashboard.h>
 
 ExampleSubsystem Robot::m_subsystem;
 OI Robot::m_oi;
 
+Spark DriveLeft = new Spark (1);
+Spark DriveRight = new Spark (2);
+SpeedControllerGroup DriveTrain (DriveLeft,DriveRight);
+DifferentialDrive Mercbot = new DifferentialDrive(DriveTrain);
+Joystick DriveStick = new Joystick(1);
+
 void Robot::RobotInit() {
 	m_chooser.AddDefault("Default Auto", &m_defaultAuto);
 	m_chooser.AddObject("My Auto", &m_myAuto);
 	frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
-}
 
+}
 /**
  * This function is called once each time the robot enters Disabled mode. You
  * can use it to reset any subsystem information you want to clear when the
@@ -74,6 +80,7 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
 	frc::Scheduler::GetInstance()->Run();
+	Mercbot.ArcadeDrive(DriveStick.GetY(), DriveStick.GetX());
 }
 
 void Robot::TestPeriodic() {}
